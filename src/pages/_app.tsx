@@ -6,6 +6,7 @@ import { Container, Header } from '@/styles/pages/app'
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { Handbag } from '@phosphor-icons/react/dist/ssr/Handbag'
 
 globalStyles()
 
@@ -15,6 +16,9 @@ export default function App({ Component, pageProps }: AppProps) {
       <Header>
         <Link href="/">
           <Image src={logoImg} alt="" />
+        </Link>
+        <Link href='' className='cart'>
+          <Handbag size={24} />
         </Link>
       </Header>
 
