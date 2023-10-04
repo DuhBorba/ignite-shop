@@ -60,21 +60,6 @@ export const Product = styled('div', {
     a: {
       textDecoration: 'none',
     },
-
-    'a:last-child': {
-      display: 'flex',
-      background: '$green500',
-      borderRadius: 6,
-      padding: '0.75rem',
-
-      svg: {
-        color: '$white',
-      },
-
-      '&:hover': {
-        background: '$green300',
-      },
-    }
   },
 
   '&:hover': {

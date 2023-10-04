@@ -11,7 +11,7 @@ import { useKeenSlider } from 'keen-slider/react'
 
 import 'keen-slider/keen-slider.min.css'
 import Stripe from "stripe";
-import { Handbag } from "@phosphor-icons/react";
+import { CartButton } from "@/components/CartButton";
 
 interface HomeProps{
   products: {
@@ -51,9 +51,7 @@ export default function Home({ products }: HomeProps) {
                   <span>{product.price}</span>
                 </Link>
                 <div>
-                  <Link href=''>
-                    <Handbag size={32} />
-                  </Link>
+                  <CartButton color="green" size="large" />
                 </div>
               </footer>
             </Product>
