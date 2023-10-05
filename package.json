@@ -13,7 +13,7 @@
     "@radix-ui/react-dialog": "^1.0.5",
     "@stitches/react": "^1.2.8",
     "axios": "^1.5.1",
-    "keen-slider": "^6.8.6",
+    "embla-carousel-react": "^8.0.0-rc14",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",

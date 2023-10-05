@@ -1,17 +1,22 @@
+import React from 'react'
+
 import { GetStaticProps } from "next";
 import { stripe } from "@/lib/stripe";
-import { HomeContainer, Product } from "@/styles/pages/home";
+import { ButtonSliderContainer, HomeContainer, Product, ShadowContainer, SliderContainer } from "@/styles/pages/home";
 import Image from "next/image";
 
 import Head from "next/head";
 
 import Link from "next/link";
 
-import { useKeenSlider } from 'keen-slider/react'
-
-import 'keen-slider/keen-slider.min.css'
 import Stripe from "stripe";
 import { CartButton } from "@/components/CartButton";
+import { useCallback } from "react";
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+
+import useEmblaCarousel, {
+  EmblaCarouselType
+} from 'embla-carousel-react'
 
 interface HomeProps{
   products: {
@@ -23,12 +28,36 @@ interface HomeProps{
 }
 
 export default function Home({ products }: HomeProps) {
-  const [ sliderRef ] = useKeenSlider({
-    slides: {
-      perView: 3,
-      spacing: 48,
-    }
+  const [prevBtnDisabled, setPrevBtnDisabled] = React.useState(true)
+  const [nextBtnDisabled, setNextBtnDisabled] = React.useState(true)
+
+  const [ emblaRef, emblaApi ] = useEmblaCarousel({
+    align: 'start',
+    skipSnaps: false,
+    dragFree: true,
   })
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev()
+  }, [emblaApi])
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext()
+  }, [emblaApi])
+
+
+  const onSelect = useCallback((emblaApi: EmblaCarouselType) => {
+    setPrevBtnDisabled(!emblaApi.canScrollPrev())
+    setNextBtnDisabled(!emblaApi.canScrollNext())
+  }, [])
+
+  React.useEffect(() => {
+    if (!emblaApi) return
+
+    onSelect(emblaApi)
+    emblaApi.on('reInit', onSelect)
+    emblaApi.on('select', onSelect)
+  }, [emblaApi, onSelect])
 
   return (
     <>
@@ -36,28 +65,45 @@ export default function Home({ products }: HomeProps) {
         <title>Home | Ignite Shop</title>
       </Head>
 
-      <HomeContainer ref={sliderRef} className="keen-slider">
+      <div style={{position: 'relative', overflow: 'hidden', width: '100%'}}>
+        <ShadowContainer>
+          <div></div>
+          <div></div>
+        </ShadowContainer>
+        <HomeContainer>
+          <div className="embla" ref={emblaRef}>
+            <SliderContainer className="embla__container container">
+              {products.map(product => {
+                return (
+                  <Product key={product.id} className="embla__slide">
+                    <Link href={`/product/${product.id}`} prefetch={false} >
+                        <Image src={product.imageUrl} width={520} height={480} alt="" />
 
-        {products.map(product => {
-          return (
-            <Product key={product.id} className="keen-slider__slide">
-              <Link href={`/product/${product.id}`} prefetch={false} >
-                  <Image src={product.imageUrl} width={520} height={480} alt="" />
-
-              </Link>
-              <footer>
-                <Link href={`/product/${product.id}`} prefetch={false} >
-                  <strong>{product.name}</strong>
-                  <span>{product.price}</span>
-                </Link>
-                <div>
-                  <CartButton color="green" size="large" />
-                </div>
-              </footer>
-            </Product>
-          )
-        })}
-      </HomeContainer>
+                    </Link>
+                    <footer>
+                      <Link href={`/product/${product.id}`} prefetch={false} >
+                        <strong>{product.name}</strong>
+                        <span>{product.price}</span>
+                      </Link>
+                      <div>
+                        <CartButton color="green" size="large" />
+                      </div>
+                    </footer>
+                  </Product>
+                )
+              })}
+            </SliderContainer>
+          </div>
+        </HomeContainer>
+        <ButtonSliderContainer>
+          <button className="embla__prev" disabled={prevBtnDisabled} onClick={scrollPrev}>
+            <CaretLeft size={48} />
+          </button>
+          <button className="embla__next" disabled={nextBtnDisabled} onClick={scrollNext}>
+            <CaretRight size={48} />
+          </button>
+        </ButtonSliderContainer>
+      </div>
     </>
   )
 }

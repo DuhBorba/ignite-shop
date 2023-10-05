@@ -1,11 +1,20 @@
 import { styled } from '..'
 
 export const HomeContainer = styled('main', {
-  display: 'flex',
   width: '100%',
-  maxWidth: 'calc(100vw - ((100vw - 1180px) / 2))',
-  marginLeft: 'auto',
+  maxWidth: 1180,
+  margin: '0 auto',
   minHeight: 656
+})
+
+export const SliderContainer = styled('div', {
+  display: 'flex',
+  gap: '3rem',
+  margin: '0 auto',
+
+  '.embla__slide': {
+    minWidth: '43.5rem',
+  }
 })
 
 export const Product = styled('div', {
@@ -14,6 +23,8 @@ export const Product = styled('div', {
   cursor: 'pointer',
   position: 'relative',
   overflow: 'hidden',
+  width: '100%',
+  minHeight: 656,
 
   display: 'flex',
   alignItems: 'center',
@@ -66,6 +77,66 @@ export const Product = styled('div', {
     footer: {
       transform: 'translateY(0%)',
       opacity: 1
+    }
+  }
+})
+
+export const ShadowContainer = styled('div', {
+  div: {
+    height: '100%',
+    width: '8.5rem',
+
+    '&:first-child': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      background: 'linear-gradient(90deg, rgba(18, 18, 20, 0.75) 0%, rgba(18, 18, 20, 0.00) 100%);',
+      zIndex: 1,
+    },
+    '&:last-child': {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      background: 'linear-gradient(90deg, rgba(18, 18, 20, 0.00) 0%, rgba(18, 18, 20, 0.75) 100%);',
+      zIndex: 1,
+    }
+  }
+})
+
+export const ButtonSliderContainer = styled('div', {
+  button: {
+    color: '$gray300',
+    height: '100%',
+    width: '8.5rem',
+    background: 'none',
+    border: 'none',
+
+    '&:first-child': {
+      position: 'absolute',
+      top: '50%',
+      left: 0,
+      transform: 'translateY(-50%)',
+      textAlign: 'left',
+      paddingLeft: '1rem',
+      zIndex: 2,
+    },
+    '&:last-child': {
+      position: 'absolute',
+      top: '50%',
+      right: 0,
+      transform: 'translateY(-50%)',
+      textAlign: 'right',
+      paddingRight: '1rem',
+      zIndex: 2,
+    },
+
+    '&:disabled': {
+      opacity: 0,
+      cursor: 'auto',
+    },
+
+    '&:not(:disabled):hover': {
+      color: '$white',
     }
   }
 })
