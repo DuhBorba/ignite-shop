@@ -1,5 +1,6 @@
 import { styled } from "@/styles";
 import * as Dialog from '@radix-ui/react-dialog';
+import Link from "next/link";
 
 export const CartContent = styled(Dialog.Content, {
   position: 'fixed',
@@ -20,6 +21,14 @@ export const CartContent = styled(Dialog.Content, {
     fontSize: '$lg',
     color: '$gray100',
     marginBottom: '2rem',
+  },
+
+  '> section': {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1.5rem',
+    overflowY: 'auto',
+    marginBottom: '1rem',
   }
 })
 
@@ -36,12 +45,13 @@ export const CartClose = styled(Dialog.Close, {
   }
 })
 
-export const CartProduct = styled('div', {
+export const CartProduct = styled(Link, {
   width: '100%',
   height: '5.8125rem',
   display: 'flex',
   alignContent: 'center',
   gap: '1.25rem',
+  textDecoration: 'none',
 })
 
 export const CartProductImage = styled('div', {
@@ -67,8 +77,9 @@ export const CartProductDetails = styled('div', {
     color: '$gray300',
     fontSize: '$md'
   },
-
+  
   strong: {
+    color: '$gray100',
     marginTop: 4,
     fontSize: '$md',
     fontWeight: '700',

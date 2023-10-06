@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { MouseEvent } from 'react'
 
 import { GetStaticProps } from "next";
 import { stripe } from "@/lib/stripe";
@@ -17,17 +17,16 @@ import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import useEmblaCarousel, {
   EmblaCarouselType
 } from 'embla-carousel-react'
+import { IProduct } from '@/contexts/CartContext';
+import { useCart } from '@/hook/useCart';
 
 interface HomeProps{
-  products: {
-    id: string;
-    name: string;
-    imageUrl: string;
-    price: string;
-  }[]
+  products: IProduct[]
 }
 
 export default function Home({ products }: HomeProps) {
+  const { addToCart, verifyItemAlreadyExists } = useCart()
+
   const [prevBtnDisabled, setPrevBtnDisabled] = React.useState(true)
   const [nextBtnDisabled, setNextBtnDisabled] = React.useState(true)
 
@@ -59,6 +58,11 @@ export default function Home({ products }: HomeProps) {
     emblaApi.on('select', onSelect)
   }, [emblaApi, onSelect])
 
+  function handleAddToCart(e: MouseEvent<HTMLButtonElement>, product: IProduct) {
+    e.preventDefault()
+    addToCart(product)
+  }
+
   return (
     <>
       <Head>
@@ -77,18 +81,23 @@ export default function Home({ products }: HomeProps) {
                 return (
                   <Product key={product.id} className="embla__slide">
                     <Link href={`/product/${product.id}`} prefetch={false} >
-                        <Image src={product.imageUrl} width={520} height={480} alt="" />
+                      <Image src={product.imageUrl} width={520} height={480} alt="" />
 
+                      <footer>
+                        <div>
+                          <strong>{product.name}</strong>
+                          <span>{product.price}</span>
+                        </div>
+                        <div>
+                          <CartButton 
+                            color="green" 
+                            size="large" 
+                            onClick={(e) => handleAddToCart(e, product)}
+                            disabled={verifyItemAlreadyExists(product.id)}
+                          />
+                        </div>
+                      </footer>
                     </Link>
-                    <footer>
-                      <Link href={`/product/${product.id}`} prefetch={false} >
-                        <strong>{product.name}</strong>
-                        <span>{product.price}</span>
-                      </Link>
-                      <div>
-                        <CartButton color="green" size="large" />
-                      </div>
-                    </footer>
                   </Product>
                 )
               })}
@@ -123,7 +132,9 @@ export const getStaticProps: GetStaticProps = async () => {
       price: new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL',
-      }).format(price.unit_amount as number / 100 )
+      }).format(price.unit_amount as number / 100 ),
+      numberPrice: price.unit_amount! / 100,
+      defaultPriceId: price.id,
     }
   })
 
