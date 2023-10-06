@@ -13,6 +13,7 @@ export const CartContent = styled(Dialog.Content, {
   boxShadow: '-4px 0px 30px 0px rgba(0, 0, 0, 0.80);',
   display: 'flex',
   flexDirection: 'column',
+  zIndex: 10,
 
   h2: {
     fontWeight: 700,
