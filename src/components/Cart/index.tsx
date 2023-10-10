@@ -1,4 +1,4 @@
-import { MouseEvent } from "react";
+import { MouseEvent, useState } from "react";
 
 import { CartButton } from "../CartButton"
 
@@ -6,8 +6,8 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { CartClose, CartContent, CartFinalization, CartProduct, CartProductDetails, CartProductImage, FinalizationDetails } from "./styles";
 import { X } from "@phosphor-icons/react";
 import Image from "next/image";
+import axios from "axios"
 
-import ImageTshirt from '../../assets/tshirt.png'
 import { useCart } from "@/hook/useCart";
 
 export const Cart = () => {
@@ -22,6 +22,26 @@ export const Cart = () => {
   function handleRemoveCartItem(e: MouseEvent<HTMLButtonElement>, productId: string){
     e.preventDefault()
     removeCartItem(productId)
+  }
+
+  const [ isCreatingCheckoutSession, setIsCreatingCheckoutSession ] = 
+    useState(false)
+
+  async function handleCheckout(){
+    try {
+      setIsCreatingCheckoutSession(true)
+
+      const response = await axios.post('/api/checkout', {
+        products: cartItems
+      })
+
+      const { checkoutUrl } = response.data
+
+      window.location.href = checkoutUrl
+    } catch(err){
+      setIsCreatingCheckoutSession(false)
+      alert('Falha ao redirecionar ao checkout!')
+    }
   }
 
   return (
@@ -82,7 +102,12 @@ export const Cart = () => {
                 <p>{formattedCartTotal}</p>
               </div>
             </FinalizationDetails>
-            <button>Finalizar compra</button>
+            <button 
+              onClick={handleCheckout}
+              disabled={isCreatingCheckoutSession || cartQuantity <= 0}
+            >
+              Finalizar compra
+            </button>
           </CartFinalization>
         </CartContent>
       </Dialog.Portal>
