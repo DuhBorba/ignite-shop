@@ -19,12 +19,15 @@ import useEmblaCarousel, {
 } from 'embla-carousel-react'
 import { IProduct } from '@/contexts/CartContext';
 import { useCart } from '@/hook/useCart';
+import { ProductSkeleton } from '@/components/ProductSkeleton';
 
 interface HomeProps{
   products: IProduct[]
 }
 
 export default function Home({ products }: HomeProps) {
+  const [isLoading, setIsLoading] = React.useState(true)
+  
   const { addToCart, verifyItemAlreadyExists } = useCart()
 
   const [prevBtnDisabled, setPrevBtnDisabled] = React.useState(true)
@@ -63,6 +66,12 @@ export default function Home({ products }: HomeProps) {
     addToCart(product)
   }
 
+  React.useEffect(() => {
+    const timeOut = setTimeout(() => setIsLoading(false), 2000)
+
+    return () => clearTimeout(timeOut)
+  }, [])
+
   return (
     <>
       <Head>
@@ -77,30 +86,38 @@ export default function Home({ products }: HomeProps) {
         <HomeContainer>
           <div className="embla" ref={emblaRef}>
             <SliderContainer className="embla__container container">
-              {products.map(product => {
-                return (
-                  <Product key={product.id} className="embla__slide">
-                    <Link href={`/product/${product.id}`} prefetch={false} >
-                      <Image src={product.imageUrl} width={520} height={480} alt="" />
-
-                      <footer>
-                        <div>
-                          <strong>{product.name}</strong>
-                          <span>{product.price}</span>
-                        </div>
-                        <div>
-                          <CartButton 
-                            color="green" 
-                            size="large" 
-                            onClick={(e) => handleAddToCart(e, product)}
-                            disabled={verifyItemAlreadyExists(product.id)}
-                          />
-                        </div>
-                      </footer>
-                    </Link>
-                  </Product>
-                )
-              })}
+              {isLoading ? (
+                <>
+                  <ProductSkeleton className='embla__slide' />
+                  <ProductSkeleton className='embla__slide' />
+                  <ProductSkeleton className='embla__slide' />
+                </>
+              ) : (
+                products.map(product => {
+                  return (
+                    <Product key={product.id} className="embla__slide">
+                      <Link href={`/product/${product.id}`} prefetch={false} >
+                        <Image src={product.imageUrl} width={520} height={480} alt="" />
+  
+                        <footer>
+                          <div>
+                            <strong>{product.name}</strong>
+                            <span>{product.price}</span>
+                          </div>
+                          <div>
+                            <CartButton 
+                              color="green" 
+                              size="large" 
+                              onClick={(e) => handleAddToCart(e, product)}
+                              disabled={verifyItemAlreadyExists(product.id)}
+                            />
+                          </div>
+                        </footer>
+                      </Link>
+                    </Product>
+                  )
+                })
+              )}
             </SliderContainer>
           </div>
         </HomeContainer>
